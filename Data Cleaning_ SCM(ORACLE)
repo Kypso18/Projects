@@ -1,0 +1,24 @@
+function moveRowsByStatus() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var mainSheet = ss.getSheetByName("OPEN");  // Replace with your main sheet name
+  var statusColumn = 37;  // Column 37 (status column)
+  
+  var data = mainSheet.getDataRange().getValues(); // Get all the data
+  var headers = data[0]; // Assuming the first row is the header
+  var statusSheets = ["CLOSED", "WITHDRAWN", "REJECTED", "FINALLY CLOSED", "CANCELED", "CLOSED FOR RECEIVING"];  // Sheet names based on status
+  
+  // Iterate through the rows (starting from row 2 to skip headers)
+  for (var i = data.length - 1; i >= 1; i--) { 
+    var status = data[i][statusColumn - 1];  // Get the status in the current row
+    
+    if (statusSheets.includes(status)) {  // If status matches one of the predefined status
+      var targetSheet = ss.getSheetByName(status);  // Get the target sheet based on status
+      
+      // Append the row to the corresponding sheet
+      targetSheet.appendRow(data[i]);
+      
+      // Remove the row from the main sheet
+      mainSheet.deleteRow(i + 1);
+    }
+  }
+}
